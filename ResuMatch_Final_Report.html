@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResuMatch: Final Project Report</title>
+    <style>
+        /* IEEE Research Paper Formatting */
+        @import url('https://fonts.googleapis.com/css2?family=Times+New+Roman:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+        
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.3;
+            color: #000;
+            background: #fff;
+            margin: 0;
+            padding: 0;
+            font-size: 11.5pt;
+        }
+
+        .paper-container {
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 0.75in 1in;
+            box-sizing: border-box;
+            background: #fff;
+        }
+
+        /* Title Area */
+        .title-block {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1.paper-title {
+            font-size: 24pt; 
+            margin-bottom: 20px;
+            font-weight: normal; 
+            line-height: 1.2;
+        }
+
+        /* Authors Styling */
+        .authors-table {
+            width: 100%;
+            margin: 0 auto 30px auto;
+            text-align: center;
+            border: none;
+            table-layout: fixed;
+        }
+        
+        .authors-table td {
+            border: none;
+            padding: 5px;
+            vertical-align: top;
+        }
+
+        .author-name {
+            font-size: 13pt;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .author-roll {
+            font-size: 11pt;
+            font-style: italic;
+        }
+
+        .affiliation {
+            font-size: 11pt;
+            font-style: italic;
+            text-align: center;
+            margin-top: -10px;
+            margin-bottom: 25px;
+        }
+
+        /* Abstract */
+        .abstract {
+            margin: 0 auto 25px auto;
+            width: 90%;
+            font-weight: bold;
+            text-align: justify;
+            font-size: 10.5pt;
+        }
+
+        .abstract span {
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* Two Column Layout */
+        .content {
+            column-count: 2;
+            column-gap: 0.35in;
+            text-align: justify;
+        }
+
+        /* Headings */
+        h2 {
+            font-size: 12pt;
+            text-transform: uppercase;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-weight: normal;
+        }
+
+        h3 {
+            font-size: 11.5pt;
+            font-style: italic;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+
+        /* Paragraphs */
+        p {
+            margin: 0 0 12px 0;
+            text-indent: 15px;
+        }
+
+        /* Math Blocks */
+        .math-block {
+            text-align: center;
+            font-style: italic;
+            margin: 15px 0;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 11.5pt;
+        }
+
+        /* Diagrams using HTML/CSS */
+        .diagram-container {
+            border: 1px solid #000;
+            padding: 10px;
+            margin: 15px 0;
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 10.5pt;
+            page-break-inside: avoid;
+        }
+
+        .diagram-box {
+            border: 1px solid #000;
+            padding: 6px 12px;
+            margin: 6px auto;
+            display: inline-block;
+            background-color: #f9f9f9;
+        }
+
+        .diagram-arrow {
+            font-size: 16pt;
+            line-height: 0.5;
+            margin: 4px 0;
+        }
+
+        .figure-caption {
+            text-align: center;
+            font-style: italic;
+            font-size: 9.5pt;
+            margin-top: 8px;
+        }
+
+        /* Charts */
+        .chart-wrapper {
+            margin: 20px auto;
+            width: 90%;
+            border: 1px solid #000;
+            padding: 20px 20px 40px 20px;
+            page-break-inside: avoid;
+            font-size: 10.5pt;
+            column-span: all;
+            -webkit-column-span: all;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 160px;
+            border-bottom: 2px solid #000;
+            border-left: 2px solid #000;
+            padding: 0 10px;
+            position: relative;
+            margin-top: 15px;
+            margin-bottom: 35px;
+            margin-left: 15px;
+        }
+
+        .bar-group {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            width: 25%;
+            height: 100%; /* CRITICAL FIX for percentage heights */
+            justify-content: center;
+            position: relative;
+        }
+
+        .bar {
+            width: 30px;
+            background-color: #555;
+            text-align: center;
+            position: relative;
+            border: 1px solid #000;
+        }
+
+        .bar.alt {
+            background-color: #ccc;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -20px;
+            width: 100%;
+            text-align: center;
+            font-size: 9pt;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            width: 130px;
+            text-align: center;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10pt;
+            color: #000;
+        }
+
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 20px;
+        }
+        
+        .legend-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            white-space: nowrap; /* Prevents text from wrapping awkwardly */
+        }
+        
+        .legend-box { 
+            width: 14px; 
+            height: 14px; 
+            border: 1px solid #000; 
+        }
+        .legend-box.dark { background-color: #555; }
+        .legend-box.light { background-color: #ccc; }
+
+        /* Tables */
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10.5pt;
+            page-break-inside: avoid;
+        }
+        
+        table.data-table th, table.data-table td {
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 6px;
+            text-align: center;
+        }
+
+        table.data-table th {
+            font-weight: normal;
+            border-top: 2px solid #000;
+            border-bottom: 1px solid #000;
+        }
+        
+        table.data-table tr:last-child td {
+            border-bottom: 2px solid #000;
+        }
+
+        ul {
+            margin-top: 5px;
+            margin-bottom: 10px;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+
+        /* Printing specifics */
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            html, body {
+                height: auto;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: none;
+            }
+            .paper-container { 
+                padding: 0 !important; 
+                margin: 0 !important; 
+                width: 100%; 
+                box-shadow: none; 
+            }
+            @page { 
+                margin: 0.75in; 
+                size: letter; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="paper-container">
+    <div class="title-block">
+        <h1 class="paper-title">ResuMatch: A Dual-Engine Natural Language Processing System for Context-Aware Resume Parsing and Dynamic Scoring</h1>
+        
+        <table class="authors-table">
+            <tr>
+                <td>
+                    <div class="author-name">Sachin Singh</div>
+                    <div class="author-roll">Roll No: 2023BCS0064</div>
+                </td>
+                <td>
+                    <div class="author-name">Roshan Binoj</div>
+                    <div class="author-roll">Roll No: 2023BCS0009</div>
+                </td>
+                <td>
+                    <div class="author-name">Tanish Babu</div>
+                    <div class="author-roll">Roll No: 2023BCS0067</div>
+                </td>
+            </tr>
+        </table>
+        
+        <div class="affiliation">
+            Deep Learning Project Implementation Report
+        </div>
+    </div>
+
+    <div class="abstract">
+        <span>Abstract.</span> Traditional Applicant Tracking Systems (ATS) often rely on exact lexical matching algorithms, creating a rigid filter. Candidates lacking specific keywords may be rejected despite possessing conceptually equivalent experience. This paper details the architecture and algorithmic implementations of <i>ResuMatch</i>—a dual-engine parsing and scoring framework. By integrating a foundational Term Frequency-Inverse Document Frequency (TF-IDF) layer with advanced transformer-based semantic embeddings (Sentence Transformers), ResuMatch evaluates resumes contextually. We outline the extraction methodologies, the challenge of heterogeneous textual granularity, our deployment of non-linear heuristic vector scaling, and the design of an adaptive grading rubric deployed on a containerized architecture. Empirical evaluation shows that ResuMatch achieves a 42.00% semantic match on synonymous terms where pure lexical TF-IDF drops to 3.33%, while achieving a 92.37% compatibility score under asymmetrical section formatting.
+    </div>
+
+    <div class="content">
+        <h2>I. Introduction</h2>
+        <p>
+            The modern recruitment process involves processing a large volume of applications. Organizations deploy Applicant Tracking Systems (ATS) to pre-filter candidate resumes against Job Descriptions (JDs). However, basic ATS parsers often rely on Boolean searches or exact-match heuristics.
+        </p>
+        <p>
+            A notable limitation with exact lexical matching is the "synonym problem." If a JD requires a "Frontend Engineer" and a qualified candidate describes their role as a "UI Developer," a standard lexical ATS might assign a mathematical correlation of zero. This structural rigidity may encourage candidates to "keyword stuff" their resumes, which can undermine qualitative assessment.
+        </p>
+        <p>
+            To address this, we developed <i>ResuMatch</i>. The objective was to engineer a system capable of semantic similarity representation—allowing the machine to map resumes conceptually, remaining resistant to simple keyword manipulation while providing interpretable similarity scores.
+        </p>
+
+        <h2>II. System Architecture & Extraction Engine</h2>
+        <p>
+            Before scoring occurs, unstructured PDF text must be converted into categorical data. Resumes lack structural uniformity; headers range widely from "Work Experience" to "Internships" to "Educational Background."
+        </p>
+        
+        <h3>A. Heuristic Section Extraction and Routing</h3>
+        <p>
+            Instead of hardcoded coordinate boundaries within PDFs, ResuMatch utilizes Natural Language Processing text-stream analysis. We implemented a robust alias mapping architecture utilizing N-Gram Regex pattern matching to extract sections dynamically.
+        </p>
+
+        <div class="diagram-container">
+            <div class="diagram-box">Unstructured PDF Byte Stream</div>
+            <div class="diagram-arrow">&#8595;</div>
+            <div class="diagram-box">Text Linearization & Cleansing</div>
+            <div class="diagram-arrow">&#8595;</div>
+            <div class="diagram-box">N-Gram Regex Boundary Detection</div>
+            <div class="diagram-arrow">&#8595;</div>
+            <div style="display:flex; justify-content: space-around; margin-top: 10px;">
+                <div class="diagram-box" style="width: 40%;">"Internships"<br>&#8594; <i>Experience Node</i></div>
+                <div class="diagram-box" style="width: 40%;">"Awards"<br>&#8594; <i>Certifications Node</i></div>
+            </div>
+            <div class="figure-caption">Fig. 1. Heuristic Section Routing Architecture</div>
+        </div>
+
+        <p>
+            This ensures structural generalization. A student utilizing an "Internships" header is systematically mapped into the "Experience" scoring bucket, preventing data loss across diverse formats.
+        </p>
+
+        <h2>III. The Dual-Engine NLP Framework</h2>
+        <p>
+            Relying solely on deep learning embeddings can sometimes dilute the importance of explicit technical skills. Thus, ResuMatch utilizes a Dual-Engine approach to balance semantic understanding with strict lexical requirements.
+        </p>
+
+        <h3>A. Engine 1: Lexical Baseline (TF-IDF)</h3>
+        <p>
+            Term Frequency-Inverse Document Frequency (TF-IDF) establishes our statistical baseline. In our preprocessing pipeline, stop-word removal explicitly filters out common words. Subsequently, the TF-IDF vectorizer evaluates the relative importance of terms. Term Frequency (TF) measures how often a term appears in the document, while Inverse Document Frequency (IDF) downweights terms that occur frequently across the entire corpus. We employed custom tokenization patterns (e.g., <code style="font-family: monospace; letter-spacing: 0; white-space: nowrap;">(?u)\b\w[\w.#+-]*\b</code>) to guarantee that domain-specific jargon like "C++", ".NET", and "C#" are strictly preserved.
+        </p>
+
+        <h3>B. Engine 2: Semantic Transformer Embeddings</h3>
+        <p>
+            To address the synonym problem, we deployed a pre-trained Sentence Transformer model (<i>all-MiniLM-L6-v2</i>) producing 384-dimensional embeddings. While prior approaches have utilized BERT-based architectures primarily for Named Entity Recognition (NER) to extract entities across job domains [5], ResuMatch instead employs Sentence Transformers for explicit semantic similarity scoring in tandem with a lexical baseline.
+        </p>
+        <p>
+            The Transformer architecture uses self-attention to model contextual relationships between tokens, allowing the resulting embeddings to capture semantic information from the surrounding text. The model encodes these contextual representations into dense 384-dimensional vectors.
+        </p>
+
+        <div class="diagram-container">
+            <div style="display:flex; justify-content: space-around;">
+                <div class="diagram-box">Resume Node</div>
+                <div class="diagram-box">JD Chunk</div>
+            </div>
+            <div class="diagram-arrow">&#8595;</div>
+            <div class="diagram-box">Bidirectional Transformer (MiniLM-L6)</div>
+            <div class="diagram-arrow">&#8595;</div>
+            <div class="diagram-box">384-Dimensional Coordinate Space</div>
+            <div class="figure-caption">Fig. 2. Semantic Vector Pipeline</div>
+        </div>
+
+        <p>
+            To determine the conceptual overlap, we calculate the Cosine Similarity—the geometric angle between two vectors in hyperspace.
+        </p>
+        <div class="math-block">
+            cos(&theta;) = (A &middot; B) / (&#8741;A&#8741; &#8741;B&#8741;)
+        </div>
+        <p>
+            A similarity approaching 1.0 indicates strong semantic similarity, while a score approaching 0 indicates weak semantic alignment.
+        </p>
+
+        <h2>IV. Algorithmic Improvisations</h2>
+        <h3>A. The Heterogeneous Context Challenge</h3>
+        <p>
+            During system testing, we observed a challenge with heterogeneous textual granularity. Long JDs contain heterogeneous information and multiple requirements, while individual resume bullets are much more focused. A single whole-document embedding can therefore dilute or obscure specific requirement-level semantic relationships.
+        </p>
+        <p>
+            To address this, ResuMatch utilizes a chunk-based semantic comparison. The JD is split into sentence-level embeddings, and each resume section's embedding is compared against all JD chunks via pairwise cosine similarity. The system then aggregates the top three strongest matches, ensuring that focused resume points are evaluated against the most relevant subset of the JD.
+        </p>
+
+        <h3>B. Non-Linear Heuristic Scaling</h3>
+        <p>
+            To align the engine's mathematical output with human perception, a non-linear heuristic score calibration is applied. While cosine similarity remains the underlying mathematical measure, a square-root transformation is applied after the similarity calculation:
+        </p>
+        <div class="math-block">
+            P = &radic;(Raw Cosine Similarity)
+        </div>
+        <p>
+            This empirical calibration maps the raw similarity range into a more interpretable scoring scale. It is not a mathematical correction of cosine similarity, but rather a heuristic adjustment for interpretability. For example, a raw score of 0.25 is transformed via the square root function to a calibrated score of 0.50 (50%).
+        </p>
+
+        <h2>V. Dynamic Scoring & Normalization Framework</h2>
+        <p>
+            We structured the internal grading algorithm to follow a weighted multi-component rubric. The base weights must strictly sum to 100% (&Sigma;W_i = 100%).
+        </p>
+
+        <table class="data-table">
+            <caption>Table I. ResuMatch Base Weights</caption>
+            <thead>
+                <tr>
+                    <th>Evaluation Metric</th>
+                    <th>Weight Allocation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Hard Skill Extraction</td>
+                    <td>40%</td>
+                </tr>
+                <tr>
+                    <td>Experience Context</td>
+                    <td>25%</td>
+                </tr>
+                <tr>
+                    <td>Chunk-Based Semantic Match</td>
+                    <td>15%</td>
+                </tr>
+                <tr>
+                    <td>Project Relevance</td>
+                    <td>10%</td>
+                </tr>
+                <tr>
+                    <td>Education</td>
+                    <td>5%</td>
+                </tr>
+                <tr>
+                    <td>Certifications</td>
+                    <td>5%</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>A. Adaptive Weighting Framework</h3>
+        <p>
+            A severe limitation of rigid parsers is penalizing candidates for missing sections (e.g., lacking a "Certifications" section). To resolve this, ResuMatch features an adaptive weighting framework. The algorithm starts with base weights where &Sigma;W_i = 100%. During parsing, the system detects which resume sections are available and excludes unavailable components.
+        </p>
+        <p>
+            It then sums the remaining active base weights and normalizes each active weight by that sum:
+        </p>
+        <div class="math-block">
+            W'_i = W_i / &Sigma;(W_j &nbsp;for&nbsp; j &isin; Active Components)
+        </div>
+        <p>
+            The final score is calculated using only the active components, ensuring the active weights always sum to exactly 100%. For example, if a resume lacks Education and Certifications, the remaining 90% is dynamically re-proportioned across the active sections.
+        </p>
+
+        <div class="diagram-container">
+            <div class="diagram-box">Base Weight Array [W<sub>1</sub>, W<sub>2</sub>, ..., W<sub>n</sub>]</div>
+            <div class="diagram-arrow">&#8595;</div>
+            <div class="diagram-box">Exclude unavailable components</div>
+            <div class="diagram-arrow">&#8595;</div>
+            <div class="diagram-box">W'<sub>i</sub> = W<sub>i</sub> / &Sigma;W<sub>active</sub></div>
+            <div class="figure-caption">Fig. 3. Dynamic Normalization Logic</div>
+        </div>
+
+        <h2>VI. Experimental Results & Performance Evaluation</h2>
+        <p>
+            To evaluate the efficacy of the Dual-Engine framework, we subjected ResuMatch to illustrative controlled cases against a standard TF-IDF baseline using synthetic test vectors. The systems were tested across three distinct scenarios: Exact Lexical Matches, Synonymous (Conceptual) Matches, and Asymmetrical Formatting (missing sections). These controlled benchmark results demonstrate the behavior of the system under specific conditions.
+        </p>
+
+        <div class="chart-wrapper">
+            <div class="chart-legend">
+                <div class="legend-item"><div class="legend-box light"></div> TF-IDF Lexical Match</div>
+                <div class="legend-item"><div class="legend-box dark"></div> ResuMatch (Dual-Engine)</div>
+            </div>
+            <div class="bar-chart">
+                <div class="bar-group">
+                    <div class="bar alt" style="height: 100%;"><div class="bar-value">100</div></div>
+                    <div class="bar dark" style="height: 88%;"><div class="bar-value">88</div></div>
+                    <div class="bar-label">Exact Match</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar alt" style="height: 3%;"><div class="bar-value">3</div></div>
+                    <div class="bar dark" style="height: 42%;"><div class="bar-value">42</div></div>
+                    <div class="bar-label">Synonymous</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar alt" style="height: 50%;"><div class="bar-value">50</div></div>
+                    <div class="bar dark" style="height: 92%;"><div class="bar-value">92</div></div>
+                    <div class="bar-label">Missing Sections</div>
+                </div>
+            </div>
+            <div class="figure-caption" style="margin-top:35px;">Fig. 4. Synthetic Evaluation Scenarios (100-Point Scale)</div>
+        </div>
+
+        <p>
+            In the <b>Synonymous</b> scenario, the baseline TF-IDF match fell to 3.33%. This occurs because TF-IDF relies on sparse vector term matching; synonyms (e.g., "REST APIs" vs "web services") occupy different indices in the vocabulary space, resulting in a dot product of near zero. Conversely, ResuMatch maintained a 42.00% match. By projecting tokens into a 384-dimensional dense vector space, conceptually similar terms are mapped geometrically close to one another. 
+        </p>
+        <p>
+            In the <b>Exact Match</b> scenario, the baseline scored 100%. ResuMatch scored 88.36% due to the asymmetric chunk-based semantic comparison where full section embeddings are compared against sentence-level JD chunks, demonstrating how the algorithm handles heterogeneous length data. Furthermore, the Adaptive Weighting Framework successfully prevented unfair penalization in the <b>Missing Sections</b> scenario, achieving a 92.37% score by dynamically redistributing weights, whereas a rigid penalizing baseline dropped to 50.00% due to static zero-filled components.
+        </p>
+
+        <h2>VII. Full-Stack Implementation Architecture</h2>
+        <p>
+            ResuMatch was engineered as a scalable web application, ensuring real-world viability.
+        </p>
+
+        <h3>A. Backend Processing & Concurrency</h3>
+        <p>
+            The core intelligence is powered by Python via the FastAPI framework. FastAPI was selected due to its innate support for ASGI (Asynchronous Server Gateway Interface), allowing for non-blocking I/O operations and efficient asynchronous request handling.
+        </p>
+
+        <h3>B. Interactive Data Visualization</h3>
+        <p>
+            The client-side interface was built using React and TypeScript, structured with Vite. We engineered a visualization layer that exposes the AI's internal mathematical scoring arrays to the end-user. Rather than treating the AI as a "black box," the frontend provides interactive breakdowns of the active weights, Lexical vs. Semantic scoring differentials, and detected resume sections, ensuring transparency.
+        </p>
+
+        <h3>C. Containerization & Deployment</h3>
+        <p>
+            To guarantee environmental parity, the entire architecture is containerized using Docker. The multi-stage Dockerfiles isolate the Node.js compilation environment from the Nginx serving layer, ensuring stability across deployment environments.
+        </p>
+
+        <h2>VIII. Constraints and Known Limitations</h2>
+        <p>
+            The system possesses several known limitations:
+        </p>
+        <ul>
+            <li><b>Abstract Structural Variance:</b> Regex-based section extraction can fail on highly unusual or bespoke resume headings, causing text to be misallocated.</li>
+            <li><b>Semantic Hallucination:</b> Transformer embeddings can produce false semantic matches if the provided context is extremely ambiguous.</li>
+            <li><b>Domain Specificity:</b> The selected Sentence Transformer (all-MiniLM-L6-v2) is a general-purpose embedding model rather than a recruitment-specific model. Hard-skill matching requires explicit lexical validation to ensure technical fidelity.</li>
+            <li><b>Evaluation Limits:</b> Evaluation on synthetic and controlled scenarios demonstrates algorithmic behavior but does not establish real-world generalization or accuracy across unstructured, malformed PDF data in the wild.</li>
+        </ul>
+
+        <h2>IX. Conclusion</h2>
+        <p>
+            ResuMatch demonstrates the feasibility of combining a statistical lexical baseline with dynamically scaled semantic embeddings. By routing the resultant data through an adaptive weighting framework, the system provides a consistent and mathematically transparent compatibility analysis. The implementation of chunk-based comparisons effectively resolves the heterogeneous context challenge found in resume parsing. This project highlights how advanced, context-aware NLP mechanisms can be integrated into a full-stack architecture to assist in modern recruitment workflows, providing explainable metrics over opaque keyword filters.
+        </p>
+
+        <h2>References</h2>
+        <p style="font-size: 9.5pt; margin-top: 5px; line-height: 1.4;">
+            [1] N. Reimers and I. Gurevych, "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks," <i>Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing (EMNLP)</i>, 2019.<br>
+            [2] K. Sparck Jones, "A statistical interpretation of term specificity and its application in retrieval," <i>Journal of Documentation</i>, vol. 28, no. 1, pp. 11-21, 1972.<br>
+            [3] J. Devlin, M. Chang, K. Lee, and K. Toutanova, "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding," <i>arXiv preprint arXiv:1810.04805</i>, 2018.<br>
+            [4] T. Wolf et al., "Transformers: State-of-the-Art Natural Language Processing," <i>Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: System Demonstrations</i>, 2020.<br>
+            [5] M. Srivastava and P. Greaney, "Resume Parsing Across Multiple Job Domains Using a BERT-Based NER Model," <i>2023 3rd International Conference on Artificial Intelligence, Computer, Data Sciences and Applications (AICS)</i>, 2023.
+        </p>
+    </div>
+</div>
+
+</body>
+</html>

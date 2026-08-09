@@ -1,0 +1,61 @@
+{
+  "Programming Languages": {
+    "Python": ["python", "python3", "py"],
+    "Java": ["java", "core java", "j2ee"],
+    "C++": ["c++", "cpp", "c/c++"],
+    "JavaScript": ["javascript", "js", "ecmascript"],
+    "TypeScript": ["typescript", "ts"],
+    "Go": ["go", "golang"],
+    "Ruby": ["ruby"],
+    "PHP": ["php"],
+    "Swift": ["swift"],
+    "Kotlin": ["kotlin"]
+  },
+  "Web/Backend Frameworks": {
+    "React": ["react", "react.js", "reactjs"],
+    "Next.js": ["next.js", "nextjs"],
+    "Node.js": ["node.js", "nodejs", "node"],
+    "Express": ["express", "express.js"],
+    "FastAPI": ["fastapi"],
+    "Django": ["django"],
+    "Flask": ["flask"],
+    "Spring Boot": ["spring boot", "springboot", "spring"],
+    "Ruby on Rails": ["ruby on rails", "rails", "ror"]
+  },
+  "Databases": {
+    "PostgreSQL": ["postgresql", "postgres"],
+    "MySQL": ["mysql"],
+    "MongoDB": ["mongodb", "mongo"],
+    "Redis": ["redis"],
+    "Elasticsearch": ["elasticsearch", "elastic search"],
+    "Cassandra": ["cassandra"],
+    "SQLite": ["sqlite"]
+  },
+  "Cloud & DevOps": {
+    "AWS": ["aws", "amazon web services"],
+    "Azure": ["azure", "microsoft azure"],
+    "GCP": ["gcp", "google cloud platform", "google cloud"],
+    "Docker": ["docker"],
+    "Kubernetes": ["kubernetes", "k8s"],
+    "Terraform": ["terraform"],
+    "GitHub Actions": ["github actions"],
+    "CI/CD": ["ci/cd", "continuous integration", "continuous deployment", "jenkins", "circleci", "gitlab ci"]
+  },
+  "Machine Learning & Data": {
+    "PyTorch": ["pytorch", "torch"],
+    "TensorFlow": ["tensorflow", "tf"],
+    "Scikit-learn": ["scikit-learn", "sklearn"],
+    "Pandas": ["pandas"],
+    "NumPy": ["numpy"],
+    "Transformers": ["transformers", "huggingface"],
+    "Kafka": ["kafka", "apache kafka"],
+    "Spark": ["spark", "apache spark"]
+  },
+  "Architecture & Concepts": {
+    "REST APIs": ["rest", "restful", "rest api", "rest apis"],
+    "GraphQL": ["graphql"],
+    "Microservices": ["microservices", "micro-services"],
+    "System Design": ["system design", "distributed systems"],
+    "Agile": ["agile", "scrum", "kanban"]
+  }
+}
