@@ -1,8 +1,11 @@
 import re
 from typing import Dict, List
 
+# Resume Section Extraction and Segmentation Service
+# Partitions freeform resume text into standardized semantic categories:
+# (summary, experience, education, skills, projects, certifications)
 class SectionExtractor:
-    # Common resume section headers
+    # Common resume section headers and lexical synonyms
     SECTION_HEADERS = {
         "summary": [r"summary", r"professional summary", r"profile", r"objective", r"about me"],
         "experience": [r"experience", r"work experience", r"employment", r"professional experience", r"employment history", r"work history", r"internships", r"internship", r"leadership", r"positions of responsibility"],
@@ -23,18 +26,23 @@ class SectionExtractor:
         
         # Match lines that are just the header, maybe with some whitespace or colons
         # E.g., "WORK EXPERIENCE:", "Education", "TECHNICAL SKILLS"
+        # Anchored to start of line to avoid false positives within paragraph text
         pattern = r"^(?:[\s\-\*]*)(?P<header>" + "|".join(all_headers) + r")(?:\s*:)?[\s]*$"
         return re.compile(pattern, re.IGNORECASE | re.MULTILINE)
 
     @classmethod
     def _normalize_header(cls, header: str) -> str:
+        """
+        Normalizes a raw matched header string to its canonical taxonomy key.
+        """
         header_lower = header.lower().strip()
         for section, variants in cls.SECTION_HEADERS.items():
             for variant in variants:
-                # We do a substring match or regex match here
+                # Substring / regex boundary check for canonical grouping
                 if re.search(r"\b" + variant + r"\b", header_lower):
                     return section
         return "other"
+
 
     @classmethod
     def extract_resume_sections(cls, text: str) -> Dict[str, str]:
