@@ -2,6 +2,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
+# Hybrid Lexical & Semantic Similarity Computation Service
+# Combines:
+# 1. TF-IDF baseline for lexical keyword match (exact technical term overlap)
+# 2. Dense transformer embedding cosine similarity for deep semantic understanding
 class SimilarityService:
     @staticmethod
     def calculate_tfidf_similarity(text1: str, text2: str) -> float:
@@ -9,10 +13,12 @@ class SimilarityService:
         Calculates lexical similarity using TF-IDF baseline.
         Stop words are removed explicitly via stop_words='english'.
         """
+        # Guard clause: return 0.0 if either input string is blank
         if not text1.strip() or not text2.strip():
             return 0.0
 
         # Custom token pattern to preserve technical terms like C++, C#, .NET
+        # Uses word boundary with support for dots, hashes, pluses, and hyphens
         vectorizer = TfidfVectorizer(
             stop_words='english',
             token_pattern=r"(?u)\b\w[\w.#+-]*\b"
@@ -31,6 +37,7 @@ class SimilarityService:
         """
         Calculates cosine similarity between two transformer embeddings.
         """
+        # Guard clause: ensure embedding arrays are populated
         if emb1.size == 0 or emb2.size == 0:
             return 0.0
             
@@ -47,7 +54,9 @@ class SimilarityService:
         # It does NOT correct vector magnitude, as cosine similarity already normalizes magnitude.
         scaled_sim = sim ** 0.5 if sim > 0 else 0.0
         
+        # Clamp calibrated score to [0.0, 1.0] interval
         return float(max(0.0, min(1.0, scaled_sim)))
+
 
     @staticmethod
     def section_level_match(resume_sections: dict, jd_text: str, jd_embedding: np.ndarray, get_embedding_func, get_embeddings_func=None) -> dict:
@@ -59,34 +68,38 @@ class SimilarityService:
         import re
         results = {}
         
-        # Split JD into sentences for chunk-based semantic matching
+        # Split JD into individual sentences/bullet points for granular semantic matching
+        # Avoids asymmetrical length matching penalty between short sections and full JDs
         jd_sentences = [s.strip() for s in re.split(r'[\n\.\•\-\*]', jd_text) if len(s.strip()) > 10]
         if not jd_sentences:
             jd_sentences = [jd_text.strip()]
             
+        # Precompute dense representations for all JD sentences
         jd_sentence_embs = get_embeddings_func(jd_sentences) if get_embeddings_func else get_embedding_func(jd_sentences)
         
+        # Iterate over segmented resume sections (e.g. experience, education, skills, projects)
         for section_name, section_content in resume_sections.items():
             if not section_content.strip():
                 continue
                 
-            # Lexical (still using whole JD for lexical as TF-IDF handles term frequency well)
+            # Lexical match (TF-IDF scoring against entire JD corpus)
             tfidf_score = SimilarityService.calculate_tfidf_similarity(section_content, jd_text)
             
-            # Semantic (chunk-based)
+            # Semantic match (dense embedding against granular JD sentence chunks)
             section_emb = get_embedding_func(section_content)
             
             if section_emb.ndim == 1:
                 section_emb = section_emb.reshape(1, -1)
                 
+            # Compute pairwise similarities between section and JD sentence representations
             similarities = cosine_similarity(section_emb, jd_sentence_embs)[0]
             
-            # Aggregate the strongest matches (mean of top 3)
+            # Aggregate the strongest matches (mean of top 3 most relevant sentences)
             k = min(3, len(similarities))
             top_k_sims = np.sort(similarities)[-k:]
             mean_top_k_sim = float(np.mean(top_k_sims))
             
-            # Apply our monotonic scaling heuristic
+            # Apply monotonic non-linear scaling heuristic for percentage output
             scaled_sim = mean_top_k_sim ** 0.5 if mean_top_k_sim > 0 else 0.0
             semantic_score = float(max(0.0, min(1.0, scaled_sim)))
             
