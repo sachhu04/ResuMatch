@@ -16,6 +16,9 @@ from app.services.scoring import ScoringService
 router = APIRouter()
 skill_extractor = SkillExtractor()
 
+# Multi-Stage Resume Analysis API Endpoint
+# Implements Server-Sent Events (SSE) streaming with NDJSON encoding
+# to provide real-time step progress to the frontend during deep NLP processing.
 @router.post("/analyze")
 async def analyze_resume(
     resume: UploadFile = File(...),
@@ -24,13 +27,14 @@ async def analyze_resume(
     db: Session = Depends(get_db)
 ):
     try:
+        # Read raw binary payload from incoming multipart file upload
         file_bytes = await resume.read()
     except Exception as e:
         raise HTTPException(status_code=400, detail="Could not read file")
 
     async def event_generator():
         try:
-            # Yield Step 1
+            # Yield Step 1: Document Structure Parsing & Layout Extraction
             yield json.dumps({"step": 1, "message": "Parsing Document Structure..."}) + "\n"
             await asyncio.sleep(0.5) # Slight delay for UI UX
             
@@ -40,24 +44,28 @@ async def analyze_resume(
                 yield json.dumps({"error": str(e)}) + "\n"
                 return
 
+            # Partition resume into structured functional sections (skills, work history, etc.)
             resume_sections = SectionExtractor.extract_resume_sections(resume_text)
             resume_sections["overall"] = resume_text
 
-            # Yield Step 2
+            # Yield Step 2: Dynamic Skill Extraction and Taxonomy Mapping
             yield json.dumps({"step": 2, "message": "Dynamically Extracting JD Requirements..."}) + "\n"
             await asyncio.sleep(0.5)
             
+            # Extract canonical skills and dynamic n-gram requirements from job description
             resume_skills = skill_extractor.extract_skills(resume_text)
             jd_requirements = skill_extractor.analyze_jd_requirements(jd_text)
             
             dynamic_reqs = skill_extractor.extract_dynamic_requirements(jd_text, top_n=12)
             dynamic_matches = skill_extractor.match_dynamic_requirements(resume_text, dynamic_reqs, similarity_threshold=0.45)
 
-            # Yield Step 3
+            # Yield Step 3: Dense Transformer Vector Generation
             yield json.dumps({"step": 3, "message": "Generating Semantic Embeddings..."}) + "\n"
             await asyncio.sleep(0.5)
             
+            # Generate 384-dimensional embedding for whole job description
             jd_embedding = EmbeddingService.get_embedding(jd_text)
+
 
             # Yield Step 4
             yield json.dumps({"step": 4, "message": "Computing Cosine Similarity..."}) + "\n"

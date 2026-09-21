@@ -1,5 +1,13 @@
 from typing import Dict, List, Any
 
+# Multi-Factor Explainable Scoring and Skill Gap Analysis Service
+# Calculates weighted compatibility scores across 6 distinct evaluation dimensions:
+# 1. Skill Match (40% default)
+# 2. Experience Match (25% default)
+# 3. Semantic Match (15% default)
+# 4. Project Relevance (10% default)
+# 5. Education Match (5% default)
+# 6. Certifications (5% default)
 class ScoringService:
     @staticmethod
     def calculate_skill_gap(resume_skills: List[str], jd_requirements: Dict[str, List[str]]) -> Dict[str, Any]:
@@ -9,6 +17,7 @@ class ScoringService:
         threshold between missed skills and found skills. For this implementation we'll simulate 
         'related' if they share a common category in the taxonomy (would need taxonomy passed in).
         """
+        # Convert candidate and required skill lists to sets for O(1) set operations
         resume_skills_set = set(resume_skills)
         jd_required = set(jd_requirements.get("required", []))
         jd_preferred = set(jd_requirements.get("preferred", []))
@@ -16,13 +25,17 @@ class ScoringService:
         
         all_jd_skills = jd_required | jd_preferred | jd_nice
         
+        # Intersect sets to identify matched vs missing skills
         matched = list(resume_skills_set & all_jd_skills)
         missing = list(all_jd_skills - resume_skills_set)
         
         # Here we just treat them all as missing initially, 
         # but in a more advanced step we'd check similarities.
         
-        # Calculate skill match score
+        # Calculate weighted skill match score:
+        # - Required skills: weight 2.0
+        # - Preferred skills: weight 1.5
+        # - Nice-to-have skills: weight 1.0
         total_weight = len(jd_required) * 2 + len(jd_preferred) * 1.5 + len(jd_nice) * 1.0
         if total_weight == 0:
             skill_score = 100.0 # No skills required
@@ -44,6 +57,7 @@ class ScoringService:
             "related": [], # Placeholder for semantic related skills
             "skill_score": round(skill_score, 2)
         }
+
 
     @staticmethod
     def calculate_overall_score(skill_score: float, section_matches: dict) -> dict:
