@@ -106,11 +106,13 @@ class SkillExtractor:
         Uses CountVectorizer to extract n-grams (1-3 words) and semantic embeddings
         to find the most relevant phrases (KeyBERT style).
         """
+        # Return empty list if job description text contains no content
         if not jd_text.strip():
             return []
 
         # 1. Extract candidate n-grams
         # We use a custom pattern to only extract words, ignoring numbers/symbols
+        # Filter location names, job posting boilerplate, and generic HR terminology
         from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
         custom_stop_words = list(ENGLISH_STOP_WORDS) + [
             'chennai', 'hyderabad', 'bangalore', 'pune', 'mumbai', 'delhi', 'noida', 'gurgaon',
@@ -133,19 +135,19 @@ class SkillExtractor:
         if len(candidates) == 0:
             return []
 
-        # 2. Embed the entire JD and all candidate phrases
+        # 2. Embed the entire JD and all candidate phrases using dense representations
         jd_embedding = EmbeddingService.get_embedding(jd_text).reshape(1, -1)
         candidate_embeddings = EmbeddingService.get_embeddings(list(candidates))
 
-        # 3. Calculate cosine similarity between JD and candidates
+        # 3. Calculate cosine similarity between JD representation and all candidate phrases
         distances = cosine_similarity(jd_embedding, candidate_embeddings)[0]
 
-        # 4. Get top N candidates
+        # 4. Get top N candidates sorted by descending semantic relevance score
         top_indices = distances.argsort()[-top_n:][::-1]
         
         # 5. Filter out overlapping phrases (e.g., if "python developer" and "python" are both in top)
         # Simple heuristic: keep the longer phrase if it contains the shorter one, or vice versa
-        # For simplicity, we just return the raw top N here, but filter out pure subsets if needed.
+        # Avoid pure subsets in the top results to ensure vocabulary diversity
         selected_phrases = []
         for idx in top_indices:
             phrase = candidates[idx]
@@ -156,6 +158,7 @@ class SkillExtractor:
                 break
                 
         return selected_phrases
+
 
     def match_dynamic_requirements(self, resume_text: str, jd_requirements: List[str], similarity_threshold: float = 0.5) -> Dict[str, Any]:
         """
