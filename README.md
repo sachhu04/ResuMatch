@@ -89,6 +89,35 @@ source backend/venv/bin/activate
 python backend/app/evaluate_system.py
 ```
 
+## Usage Workflow
+
+1. Upload a resume in PDF or DOCX format, or provide the resume text.
+2. Enter or paste the target job description.
+3. Run the analysis to extract skills, identify relevant resume sections, and compare them with the job requirements.
+4. Review the compatibility score, semantic matching result, matched skills, related skills, and missing skills.
+5. Use the dashboard to compare previous analyses across different job descriptions.
+
+## Interpreting Results
+
+The compatibility score is intended to support resume improvement and job-description matching. It should be interpreted together with the detailed skill-gap analysis rather than as the only basis for a hiring decision.
+
+- **Matched skills** are present in both the resume and the job description.
+- **Related skills** are semantically similar or contextually relevant to the job requirement.
+- **Missing skills** are identified in the job description but not found in the submitted resume.
+- **Semantic similarity** reflects contextual alignment between resume content and the job description, beyond exact keyword overlap.
+
+## Privacy and Responsible Use
+
+Resumes may contain personal information. For demonstrations, testing, and academic evaluation, use sample or anonymized resumes whenever possible. ResuMatch is an assistive analysis tool and does not replace human review in recruitment decisions.
+
+## Future Enhancements
+
+- Support for additional resume formats and improved handling of multi-column layouts.
+- Expansion of the skill taxonomy with domain-specific and emerging technologies.
+- Configurable scoring weights for different job categories.
+- More benchmark cases for evaluating semantic matching performance.
+- Optional feedback suggestions for improving resume-job alignment.
+
 ## Limitations
 - The current rule-based section extractor may degrade if a resume has a highly unusual format (e.g., multi-column graphic resumes without clear logical text flow).
 - The skill taxonomy requires manual curation for new or niche technologies.
